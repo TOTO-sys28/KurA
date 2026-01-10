@@ -48,6 +48,12 @@ jobs:
           brew install opus pkg-config cmake
           echo "PKG_CONFIG_PATH=$(brew --prefix)/lib/pkgconfig" >> "$GITHUB_ENV"
 
+      - name: Install Ubuntu deps
+        if: ${{ startsWith(matrix.os, 'ubuntu') }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libopus-dev pkg-config cmake
+
       - uses: Swatinem/rust-cache@v2
 
       - name: Build
