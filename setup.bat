@@ -2,8 +2,8 @@
 setlocal enabledelayedexpansion
 
 echo KurA setup
-
 echo.
+
 set /p TOKEN=Discord bot token (DISCORD_TOKEN): 
 if "%TOKEN%"=="" (
   echo Token is required.
@@ -22,11 +22,13 @@ echo RUST_LOG=%RUST_LOG%>> kura.env
 
 echo.
 echo Wrote kura.env
+echo.
 
 echo To run in this terminal:
 echo   call kura.env
-echo   kura_voice.exe
+echo   target\release\kura_voice.exe
 
+echo.
 echo To set permanently (optional):
 echo   setx DISCORD_TOKEN "%TOKEN%"
 echo   setx OPUS_CACHE "%OPUS_CACHE%"
