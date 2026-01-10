@@ -1,208 +1,104 @@
 # KurA
 
-**KurA** is a lightweight Discord voice music bot built for **low CPU usage**.
+A lightweight Discord music bot optimized for low CPU usage.
 
-It’s designed around one simple rule:
+## How It Works
 
-- **Pre-cache your library as `.opus`** → playback is just streaming (no live transcoding).
+KurA keeps CPU usage minimal by using pre-converted `.opus` files instead of live transcoding. Just convert your music library once, and playback is simple file streaming.
 
-## Why it feels fast
-
-- **Rust + Songbird** (compiled voice stack)
-- **Opus passthrough-friendly** setup (volume `1.0`, single track)
-- **Prefix search** that works well with Arabic / non‑Latin names
+**Tech stack:** Rust + Songbird for efficient voice handling
 
 ## Commands
 
-- `!join` / `!leave`
-- `!play <prefix>`
-  - Example: `!play A` or `!play ال`
-  - Picks a song whose name **starts with** the prefix
-  - If multiple match → **random**
-- `!play` (no args) → random
-- `!random` → random
-- `!skip` → stop + random next
-- `!stop`
-- `!loop` → toggle loop on/off
-- `!list [prefix]` → list all (or prefix-first matches)
-- `!reindex`
+- `!join` / `!leave` - Join or leave voice channel
+- `!play <prefix>` - Play a song starting with the prefix (e.g., `!play A` or `!play ال`)
+  - Multiple matches? Picks randomly
+  - No prefix? Plays random song
+- `!random` - Play random song
+- `!skip` - Skip to random next song
+- `!stop` - Stop playback
+- `!loop` - Toggle loop mode
+- `!list [prefix]` - List all songs (or filter by prefix)
+- `!reindex` - Reload music library
 
-## Quickstart (recommended): GitHub Releases (prebuilt binaries)
+## Quick Setup
 
-1. Download the right file from **Releases**.
-2. Set `DISCORD_TOKEN`.
-3. Run the binary.
+### 1. Download the Bot
 
-### Linux x64
+Grab the prebuilt binary for your system from the [Releases](https://github.com/TOTO-sys28/KurA/releases) page.
+
+### 2. Get Your Discord Token
+
+1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
+2. Create an application → **Bot** section
+3. Enable **MESSAGE CONTENT INTENT**
+4. Copy your bot token
+
+**⚠️ Never share your token publicly. If leaked, reset it immediately.**
+
+### 3. Set Environment Variables & Run
+
+**Linux/macOS:**
 ```bash
-export DISCORD_TOKEN="YOUR_TOKEN"
+export DISCORD_TOKEN="YOUR_TOKEN_HERE"
 export OPUS_CACHE="./music_opus"
 export RUST_LOG=warn
-
 chmod +x ./kura_voice
 ./kura_voice
 ```
 
-### Windows
+**Windows:**
 ```bat
-set DISCORD_TOKEN=YOUR_TOKEN
+set DISCORD_TOKEN=YOUR_TOKEN_HERE
 set OPUS_CACHE=./music_opus
 set RUST_LOG=warn
-
 kura_voice.exe
 ```
 
-### macOS
-```bash
-export DISCORD_TOKEN="YOUR_TOKEN"
-export OPUS_CACHE="./music_opus"
-export RUST_LOG=warn
+## Converting Your Music Library
 
-chmod +x ./kura_voice
-./kura_voice
-```
+### Install FFmpeg
 
-## Setup: Discord bot token (required)
-
-1. Discord Developer Portal → your application → **Bot**
-2. Enable:
-   - **MESSAGE CONTENT INTENT**
-3. Copy the token.
-
-**Security**
-
-- Never paste your token into issues / screenshots.
-- If you leaked it once: **reset token immediately**.
-
-## Interactive setup (recommended)
-
-- **Linux/macOS:**
-```bash
-bash scripts/setup.sh
-```
-
-- **Windows:**
-```bat
-setup.bat
-```
-
-## Build your Opus cache (recommended)
-
-Put music in `./music/` (or any folder), convert to `./music_opus/`.
-
-### Install ffmpeg
-
-- **Ubuntu/Debian:** `sudo apt-get install -y ffmpeg`
-- **Fedora:** `sudo dnf install -y ffmpeg`
+- **Ubuntu/Debian:** `sudo apt-get install ffmpeg`
+- **Fedora:** `sudo dnf install ffmpeg`
 - **Arch:** `sudo pacman -S ffmpeg`
 - **macOS:** `brew install ffmpeg`
 - **Windows:** `winget install Gyan.FFmpeg`
 
-### Convert (Linux/macOS)
+### Convert to Opus
+
+Place your music files in `./music/`, then convert:
+
+**Linux/macOS:**
 ```bash
 bash scripts/convert_all_to_opus.sh ./music ./music_opus 64k 1
 ```
 
-### Convert (Windows PowerShell)
+**Windows PowerShell:**
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\convert_all_to_opus.ps1 -SRC ./music -OUT ./music_opus -BITRATE 64k
 ```
 
-## CPU monitoring
+## Optional: Build from Source
 
-Linux:
-
-```bash
-htop
-```
-
-or:
-
-```bash
-pidstat -p $(pgrep -n kura_voice) 1
-```
-
-## Source build (optional)
-
-If you want to build locally:
+If you prefer to compile it yourself:
 
 ```bash
 cargo build --release
 ```
 
-## Publishing to GitHub (your account)
+## Monitoring CPU Usage
 
-From inside the `KurA/` folder:
-
+**Linux:**
 ```bash
-git init
-git add .
-git commit -m "KurA: initial release"
-git branch -M main
-git remote add origin https://github.com/TOTO-sys28/KurA.git
-git push -u origin main
+htop
 ```
 
-## Releases (auto-built downloads)
-
-This repo includes GitHub Actions workflows that build and attach:
-
-- Prebuilt binaries (Linux/Windows/macOS)
-- Linux packages: `.deb` + `.rpm`
-
-When you push a tag:
-
+Or for specific process monitoring:
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+pidstat -p $(pgrep -n kura_voice) 1
 ```
 
-After the workflow finishes, download everything from the GitHub Release page.
+---
 
-Before you run `git add .`, make sure you don’t commit local build outputs (they’re ignored, but delete them if already created):
-
-```bash
-rm -f ./*.deb
-rm -rf packaging/rpm/dist
-```
-
-## Linux packages (Option 2)
-
-If you want system packages (service + `/etc/kura_voice.env`):
-
-### Debian/Ubuntu (.deb)
-
-Build locally:
-```bash
-sudo apt-get install -y dpkg-dev
-bash packaging/deb/build_deb.sh
-```
-
-Install:
-```bash
-sudo dpkg -i kura-voice_0.1.0_amd64.deb
-sudo nano /etc/kura_voice.env
-sudo systemctl enable --now kura_voice
-```
-
-### Fedora/RHEL (.rpm)
-
-Build locally (best-effort helper):
-```bash
-sudo dnf install -y rpm-build
-bash packaging/rpm/build_rpm.sh
-```
-
-### Arch (PKGBUILD / pacman / yay)
-
-Local build:
-```bash
-cd packaging/arch
-makepkg -si
-```
-
-Then:
-```bash
-sudo nano /etc/kura_voice.env
-sudo systemctl enable --now kura_voice
-```
+That's it! Your bot should now be running and ready to play music with minimal CPU overhead.
