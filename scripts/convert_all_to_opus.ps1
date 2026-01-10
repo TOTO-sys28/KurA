@@ -11,6 +11,9 @@ if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
   exit 1
 }
 
+$SRC = (Resolve-Path -LiteralPath $SRC).Path
+$OUT = (Resolve-Path -LiteralPath $OUT -ErrorAction SilentlyContinue) ?? $OUT
+
 New-Item -ItemType Directory -Force -Path $OUT | Out-Null
 
 $files = Get-ChildItem -Path $SRC -Recurse -File | Where-Object {
@@ -18,10 +21,10 @@ $files = Get-ChildItem -Path $SRC -Recurse -File | Where-Object {
 }
 
 foreach ($f in $files) {
-  $rel = Resolve-Path -LiteralPath $f.FullName
-  $relStr = $f.FullName.Substring((Resolve-Path -LiteralPath $SRC).Path.Length).TrimStart('\\','/')
-  $dst = Join-Path $OUT ([System.IO.Path]::ChangeExtension($relStr, ".opus"))
+  $relPath = [System.IO.Path]::GetRelativePath($SRC, $f.FullName)
+  $dst = Join-Path $OUT ([System.IO.Path]::ChangeExtension($relPath, ".opus"))
   $dstDir = Split-Path -Parent $dst
+
   New-Item -ItemType Directory -Force -Path $dstDir | Out-Null
 
   if (Test-Path -LiteralPath $dst) {
@@ -30,7 +33,13 @@ foreach ($f in $files) {
   }
 
   Write-Host "Converting: $($f.FullName) -> $dst"
-  ffmpeg -nostdin -hide_banner -loglevel error -y -i "$($f.FullName)" -vn -ar 48000 -ac 2 -c:a libopus -b:a $BITRATE -vbr on -application audio -compression_level 10 "$dst"
+
+  ffmpeg -nostdin -hide_banner -loglevel error -y `
+    -i "$($f.FullName)" `
+    -vn -ar 48000 -ac 2 `
+    -c:a libopus -b:a $BITRATE -vbr on `
+    -application audio -compression_level 10 `
+    "$dst"
 }
 
 Write-Host "Done."
