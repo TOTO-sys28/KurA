@@ -13,4 +13,4 @@ OPUS_CACHE=${OPUS_CACHE:-./music_opus}
 RUST_LOG=${RUST_LOG:-warn}
 export OPUS_CACHE RUST_LOG
 
-./kura_voice
+./target/release/kura_voice
