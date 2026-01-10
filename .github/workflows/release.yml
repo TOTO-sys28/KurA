@@ -107,7 +107,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install build deps
-        run: dnf install -y rust cargo rpm-build systemd-rpm-macros
+        run: dnf install -y rust cargo rpm-build systemd-rpm-macros opus-devel pkg-config cmake
       - name: Build .rpm
         run: bash packaging/rpm/build_rpm.sh
       - name: Upload .rpm
