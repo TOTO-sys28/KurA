@@ -1,0 +1,23 @@
+# Rust
+/target/
+**/target/
+Cargo.lock
+
+# Local cache/media
+/music/
+/music_opus/
+
+# Secrets
+.env
+
+# Packaging outputs
+/packaging/deb_pkg/
+/packaging/rpm/.rpmbuild/
+/packaging/rpm/.rpmdb/
+/packaging/rpm/dist/
+*.deb
+*.rpm
+
+# OS
+.DS_Store
+Thumbs.db

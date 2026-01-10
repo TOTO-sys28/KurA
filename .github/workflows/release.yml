@@ -1,0 +1,102 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            bin: kura_voice
+            archive: kura_voice-linux-x64.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bin: kura_voice.exe
+            archive: kura_voice-windows-x64.zip
+          - os: macos-13
+            target: x86_64-apple-darwin
+            bin: kura_voice
+            archive: kura_voice-macos-x64.tar.gz
+          - os: macos-14
+            target: aarch64-apple-darwin
+            bin: kura_voice
+            archive: kura_voice-macos-arm64.tar.gz
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Package (tar.gz)
+        if: ${{ !contains(matrix.archive, '.zip') }}
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/${{ matrix.target }}/release/${{ matrix.bin }} dist/
+          cp README.md dist/
+          cp run.sh dist/
+          tar -czf ${{ matrix.archive }} -C dist .
+
+      - name: Package (zip)
+        if: ${{ contains(matrix.archive, '.zip') }}
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp target/${{ matrix.target }}/release/${{ matrix.bin }} dist/
+          cp README.md dist/
+          cp run.bat dist/
+          powershell -Command "Compress-Archive -Path dist/* -DestinationPath ${{ matrix.archive }}"
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.archive }}
+
+  linux-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Build binary
+        run: cargo build --release
+      - name: Build .deb
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev
+          bash packaging/deb/build_deb.sh
+      - name: Upload .deb
+        uses: softprops/action-gh-release@v2
+        with:
+          files: kura-voice_0.1.0_amd64.deb
+
+  rpm-package:
+    runs-on: ubuntu-latest
+    container: fedora:40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build deps
+        run: dnf install -y rust cargo rpm-build systemd-rpm-macros
+      - name: Build .rpm
+        run: bash packaging/rpm/build_rpm.sh
+      - name: Upload .rpm
+        uses: softprops/action-gh-release@v2
+        with:
+          files: packaging/rpm/dist/**/*.rpm

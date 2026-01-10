@@ -1,0 +1,30 @@
+pkgname=kura-voice
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="KurA low-CPU Discord voice music bot"
+arch=('x86_64')
+url="https://github.com/TOTO-sys28/KurA"
+license=('MIT')
+depends=()
+makedepends=('rust' 'cargo')
+source=()
+sha256sums=()
+
+build() {
+  cd "${srcdir}"/../..
+  cargo build --release
+}
+
+package() {
+  cd "${srcdir}"/../..
+  install -Dm755 target/release/kura_voice "${pkgdir}/usr/bin/kura_voice"
+  install -Dm644 packaging/systemd/kura_voice.service "${pkgdir}/usr/lib/systemd/system/kura_voice.service"
+
+  install -Dm600 /dev/null "${pkgdir}/etc/kura_voice.env"
+  cat > "${pkgdir}/etc/kura_voice.env" <<'EOF'
+# KurA environment
+# DISCORD_TOKEN=YOUR_TOKEN_HERE
+OPUS_CACHE=/var/lib/kura_voice/music_opus
+RUST_LOG=warn
+EOF
+}

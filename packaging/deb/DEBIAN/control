@@ -1,0 +1,9 @@
+Package: kura-voice
+Version: 0.1.0
+Section: sound
+Priority: optional
+Architecture: amd64
+Maintainer: TOTO-sys28
+Depends: libc6 (>= 2.31)
+Description: KurA low-CPU Discord voice music bot
+ Streams cached .opus files for low CPU usage.

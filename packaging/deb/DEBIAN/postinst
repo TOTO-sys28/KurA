@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+if [ ! -f /etc/kura_voice.env ]; then
+  umask 077
+  cat > /etc/kura_voice.env <<'EOF'
+# KurA environment
+# DISCORD_TOKEN=YOUR_TOKEN_HERE
+OPUS_CACHE=/var/lib/kura_voice/music_opus
+RUST_LOG=warn
+EOF
+fi
+
+systemctl daemon-reload >/dev/null 2>&1 || true
+
+echo "KurA installed. Edit /etc/kura_voice.env then run: sudo systemctl enable --now kura_voice"
+exit 0

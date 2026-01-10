@@ -1,0 +1,14 @@
+name: release-packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deprecated:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deprecated
+        run: echo "Deprecated: packages are built in .github/workflows/release.yml"
