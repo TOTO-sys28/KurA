@@ -54,9 +54,7 @@ set OPUS_CACHE=./music_opus
 set RUST_LOG=warn
 kura_voice.exe
 ```
-```bat
-powershell.exe -ExecutionPolicy Bypass -File .\convert_all_to_opus.ps1
-```
+
 ## Converting Your Music Library
 
 ### Install FFmpeg
