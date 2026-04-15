@@ -1,23 +1,18 @@
-# Rust
 /target/
-**/target/
-Cargo.lock
-
-# Local cache/media
-/music/
-/music_opus/
-
-# Secrets
-.env
-
-# Packaging outputs
-/packaging/deb_pkg/
-/packaging/rpm/.rpmbuild/
-/packaging/rpm/.rpmdb/
-/packaging/rpm/dist/
+/node_modules/
+**/node_modules/
+*.msi
+*.exe
+*.pdb
+*.wixobj
+*.wixpdb
+*.mp3
+*.zip
+*.tar.gz
 *.deb
 *.rpm
-
-# OS
-.DS_Store
-Thumbs.db
+kura.env
+packaging/windows/dist/
+packaging/deb_pkg/
+packaging/rpm/dist/
+kura-voice-bin-latest/

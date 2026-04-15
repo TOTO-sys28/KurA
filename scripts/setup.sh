@@ -23,16 +23,16 @@ read -r -p "Log level (warn/info) [warn]: " RUST_LOG
 RUST_LOG=${RUST_LOG:-warn}
 
 echo
-read -r -p "Write system-wide env file to /etc/kura_voice.env? (recommended for packages) [y/N]: " SYS
+read -r -p "Write system-wide env file to /etc/kura.env? (recommended for packages) [y/N]: " SYS
 
 if [[ "$SYS" =~ ^[Yy]$ ]]; then
-  sudo sh -c "umask 077; cat > /etc/kura_voice.env <<EOF
+  sudo sh -c "umask 077; cat > /etc/kura.env <<EOF
 DISCORD_TOKEN=$TOKEN
 OPUS_CACHE=$OPUS_CACHE
 RUST_LOG=$RUST_LOG
 EOF"
-  echo "Wrote /etc/kura_voice.env"
-  echo "If installed as a service: sudo systemctl enable --now kura_voice"
+  echo "Wrote /etc/kura.env"
+  echo "If installed as a service: sudo systemctl enable --now kura"
 else
   umask 077
   cat > .env <<EOF
@@ -41,5 +41,5 @@ OPUS_CACHE=$OPUS_CACHE
 RUST_LOG=$RUST_LOG
 EOF
   echo "Wrote ./.env"
-  echo "Run: source ./.env && ./kura_voice"
+  echo "Run: source ./.env && ./kura"
 fi

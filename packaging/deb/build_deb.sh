@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Build a minimal .deb from a release binary.
+# Build a minimal .deb from release binaries.
 # Requires: dpkg-deb
 
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
@@ -15,24 +15,25 @@ cp "$ROOT_DIR/packaging/deb/DEBIAN/postinst" "$PKGDIR/DEBIAN/postinst"
 cp "$ROOT_DIR/packaging/deb/DEBIAN/prerm" "$PKGDIR/DEBIAN/prerm"
 chmod 755 "$PKGDIR/DEBIAN/postinst" "$PKGDIR/DEBIAN/prerm"
 
-cp "$ROOT_DIR/packaging/systemd/kura_voice.service" "$PKGDIR/usr/lib/systemd/system/kura_voice.service"
+cp "$ROOT_DIR/packaging/systemd/kura.service" "$PKGDIR/usr/lib/systemd/system/kura.service"
 
 # env file template
 umask 077
-cat > "$PKGDIR/etc/kura_voice.env" <<'EOF'
+cat > "$PKGDIR/etc/kura.env" <<'EOF'
 # KurA environment
 # DISCORD_TOKEN=YOUR_TOKEN_HERE
-OPUS_CACHE=/var/lib/kura_voice/music_opus
+OPUS_CACHE=/var/lib/kura/music_opus
 RUST_LOG=warn
 EOF
-chmod 600 "$PKGDIR/etc/kura_voice.env"
+chmod 600 "$PKGDIR/etc/kura.env"
 
-# binary
-if [ ! -f "$ROOT_DIR/target/release/kura_voice" ]; then
+# binaries
+if [ ! -f "$ROOT_DIR/target/release/kura" ]; then
   echo "Build the binary first: cargo build --release" >&2
   exit 1
 fi
-cp "$ROOT_DIR/target/release/kura_voice" "$PKGDIR/usr/bin/kura_voice"
-chmod 755 "$PKGDIR/usr/bin/kura_voice"
+cp "$ROOT_DIR/target/release/kura" "$PKGDIR/usr/bin/kura"
+cp "$ROOT_DIR/target/release/kurac" "$PKGDIR/usr/bin/kurac"
+chmod 755 "$PKGDIR/usr/bin/kura" "$PKGDIR/usr/bin/kurac"
 
-dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura-voice_0.1.0_amd64.deb"
+dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura_0.1.0_amd64.deb"

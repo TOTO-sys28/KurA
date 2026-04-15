@@ -11,5 +11,7 @@ if (-not $env:DISCORD_TOKEN) {
 $env:OPUS_CACHE = $OPUS_CACHE
 $env:RUST_LOG = $RUST_LOG
 
-cargo build --release
-.\target\release\kura_voice.exe
+# Ensure we don't crash on high-core systems and handle VS mismatch
+$env:CMAKE_GENERATOR = "NMake Makefiles"
+cargo build --release -j 2
+.\target\release\kura.exe

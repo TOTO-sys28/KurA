@@ -5,13 +5,13 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-EnvironmentFile=/etc/kura_voice.env
-WorkingDirectory=/var/lib/kura_voice
-ExecStart=/usr/bin/kura_voice
+EnvironmentFile=/etc/kura.env
+WorkingDirectory=/var/lib/kura
+ExecStart=/usr/bin/kura
 Restart=on-failure
 RestartSec=3
 DynamicUser=yes
-StateDirectory=kura_voice
+StateDirectory=kura
 
 [Install]
 WantedBy=multi-user.target

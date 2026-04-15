@@ -1,0 +1,32 @@
+{
+  "name": "@toto-sys28/kura",
+  "version": "0.1.0",
+  "description": "KurA CLI installer (kura, kurac)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TOTO-sys28/KurA.git"
+  },
+  "homepage": "https://github.com/TOTO-sys28/KurA#readme",
+  "bugs": {
+    "url": "https://github.com/TOTO-sys28/KurA/issues"
+  },
+  "keywords": [
+    "discord",
+    "music",
+    "bot",
+    "tui",
+    "installer"
+  ],
+  "bin": {
+    "kura": "bin/kura.js",
+    "kurac": "bin/kurac.js"
+  },
+  "scripts": {
+    "postinstall": "node scripts/install.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "tar": "^6.2.1"
+  }
+}

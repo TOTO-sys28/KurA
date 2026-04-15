@@ -1,4 +1,4 @@
-Package: kura-voice
+Package: kura
 Version: 0.1.0
 Section: sound
 Priority: optional
