@@ -1,104 +1,123 @@
-# KurA
+<div align="center">
 
-A lightweight Discord music bot optimized for low CPU usage.
+# 🐦 KurA
+
+**Mastering the Discord Pulse: Lightweight, Stable, and Secure.**
+
+[![Rust](https://img.shields.io/badge/language-rust-orange.svg)](https://www.rust-lang.org)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/TOTO-sys28/KurA)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DAVE Support](https://img.shields.io/badge/Discord-DAVE%20Verified-green.svg)](https://discord.com/blog/how-discord-is-securing-voice-and-video-with-end-to-end-encryption)
+
+[**Features**](#features) | [**How It Works**](#how-it-works) | [**Advanced: The Encryption Problem**](#advanced-the-encryption-problem) | [**Quick Setup**](#quick-setup)
+
+</div>
+
+---
+
+## Features
+
+-   🚀 **Ultra-Low CPU**: Zero-transcoding playback using pre-converted `.opus` files.
+-   🛡️ **Modern Security**: Full support for **DAVE (Discord Advanced Voice Encryption)** and MLS-based E2EE.
+-   📡 **Rock-Solid Connectivity**: Compliant with **Voice Gateway V8**, resolving common 4006 session invalidations.
+-   🔊 **Precision Volume**: Per-guild persistent volume control (`0.0`-`2.0`).
+-   💎 **One-Click Privacy**: Verify end-to-end encryption with our unique `!privacy` command.
+
+---
 
 ## How It Works
 
-KurA keeps CPU usage minimal by using pre-converted `.opus` files instead of live transcoding. Just convert your music library once, and playback is simple file streaming.
+KurA achieves unparalleled performance by offloading audio processing to a "convert-once" workflow. Instead of burning CPU cycles re-encoding audio on the fly, it streams raw `.opus` packets directly to Discord's voice servers.
 
-**Tech stack:** Rust + Songbird for efficient voice handling
+---
 
-## Commands
+## 🔬 Advanced: The Encryption Problem
 
-- `!join` / `!leave` - Join or leave voice channel
-- `!play <prefix>` - Play a song starting with the prefix (e.g., `!play A` or `!play ال`)
-  - Multiple matches? Picks randomly
-  - No prefix? Plays random song
-- `!random` - Play random song
-- `!skip` - Skip to random next song
-- `!stop` - Stop playback
-- `!loop` - Toggle loop mode
-- `!list [prefix]` - List all songs (or filter by prefix)
-- `!reindex` - Reload music library
+During development, we identified and solved two critical hurdles that cause most custom Discord bots to fail on modern channels:
 
-## Quick Setup
+### 1. The Gateway V8 "Sequence Gap"
+Discord's latest Voice Gateway (V8) is extremely strict. Every heartbeat **must** acknowledge the latest inbound sequence number from the server (`seq_ack`). Traditional libraries often omit this, leading to the dreaded **4006: Session No Longer Valid** error every 14 seconds. KurA implements a custom JSON transformer that precisely tracks and injects these sequence numbers.
 
-### 1. Download the Bot
+### 2. DAVE & MLS Handshake
+End-to-End Encryption (E2EE) requires a complex multi-step handshake using **Messaging Layer Security (MLS)**. KurA handles binary handshake frames (Opcodes 25-30) and performs media encryption using **XChaCha20Poly1305** before the transport layer ever sees the packet.
 
-Grab the prebuilt binary for your system from the [Releases](https://github.com/TOTO-sys28/KurA/releases) page.
+---
 
-### 2. Get Your Discord Token
+## 🛠 Quick Setup
 
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create an application → **Bot** section
-3. Enable **MESSAGE CONTENT INTENT**
-4. Copy your bot token
+### 1. Requirements
+-   **FFmpeg**: Required for the one-time conversion process.
+-   **Discord Bot Token**: Ensure **Message Content Intent** is enabled in the Developer Portal.
 
-**⚠️ Never share your token publicly. If leaked, reset it immediately.**
+<details>
+<summary><b>🐧 Linux (Arch / Ubuntu / Fedora)</b></summary>
 
-### 3. Set Environment Variables & Run
-
-**Linux/macOS:**
 ```bash
-export DISCORD_TOKEN="YOUR_TOKEN_HERE"
-export OPUS_CACHE="./music_opus"
-export RUST_LOG=warn
-chmod +x ./kura_voice
-./kura_voice
+# Install dependencies (Ubuntu)
+sudo apt install ffmpeg libopus-dev
+
+# Use our AUR package (Arch)
+makepkg -si ./packaging/arch/PKGBUILD
+
+# Run with token
+export DISCORD_TOKEN="your_token"
+cargo run --release --features dave
 ```
+</details>
 
-**Windows:**
-```bat
-set DISCORD_TOKEN=YOUR_TOKEN_HERE
-set OPUS_CACHE=./music_opus
-set RUST_LOG=warn
-kura_voice.exe
-```
+<details>
+<summary><b>🪟 Windows (Powershell)</b></summary>
 
-## Converting Your Music Library
-
-### Install FFmpeg
-
-- **Ubuntu/Debian:** `sudo apt-get install ffmpeg`
-- **Fedora:** `sudo dnf install ffmpeg`
-- **Arch:** `sudo pacman -S ffmpeg`
-- **macOS:** `brew install ffmpeg`
-- **Windows:** `winget install Gyan.FFmpeg`
-
-### Convert to Opus
-
-Place your music files in `./music/`, then convert:
-
-**Linux/macOS:**
-```bash
-bash scripts/convert_all_to_opus.sh ./music ./music_opus 64k 1
-```
-
-**Windows PowerShell:**
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\convert_all_to_opus.ps1 -SRC ./music -OUT ./music_opus -BITRATE 64k
+# Install FFmpeg
+winget install Gyan.FFmpeg
+
+# Run
+$env:DISCORD_TOKEN="your_token"
+cargo run --release --features dave --bin kura_voice
 ```
+</details>
 
-## Optional: Build from Source
-
-If you prefer to compile it yourself:
+<details>
+<summary><b>🍎 macOS (Homebrew)</b></summary>
 
 ```bash
-cargo build --release
+# Install FFmpeg
+brew install ffmpeg
+
+# Run
+export DISCORD_TOKEN="your_token"
+cargo run --release --features dave
 ```
+</details>
 
-## Monitoring CPU Usage
+---
 
-**Linux:**
+## 🎼 Commands
+
+| Command | Action |
+| --- | --- |
+| `!join` | Join your current voice channel |
+| `!play <prefix>` | Play a song (random match if ambiguous) |
+| `!volume <val>` | Set volume (0.0 to 2.0) |
+| `!privacy` | **DAVE Only**: Display the unique 30-digit Privacy Verification Code |
+| `!skip` | Skip to a random next song |
+| `!help` | Show all available commands |
+
+---
+
+## 💎 Contributor Cleanup & Standardization
+
+KurA is designed to be cross-distro compatible. All file paths use Rust's `PathBuf` to ensure seamless operation on both Windows backslashes and Unix forward-slashes. 
+
+**Commit-ready?** Run:
 ```bash
-htop
-```
-
-Or for specific process monitoring:
-```bash
-pidstat -p $(pgrep -n kura_voice) 1
+cargo clean
+cargo build --features dave
 ```
 
 ---
 
-That's it! Your bot should now be running and ready to play music with minimal CPU overhead.
+<div align="center">
+Made with ❤️ for the low-latency community.
+</div>
