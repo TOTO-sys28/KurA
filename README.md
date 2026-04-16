@@ -19,55 +19,49 @@
 
 ## Why KurA
 
-- 🚀 Low runtime CPU usage by avoiding live transcoding.
-- 🌍 Works across Windows, Linux, and macOS.
-- 📦 Includes distro packaging helpers (`.deb`, `.rpm`, Arch `PKGBUILD`).
-- 🛡️ Handles E2EE/DAVE voice channels with clear fallback behavior.
+- 🚀 **Zero Transcoding:** Low runtime CPU usage by avoiding live transcoding.
+- 🌍 **Cross-Platform:** Works across Windows, Linux, and macOS.
+- 📦 **Simple Install:** Includes an MSI installer for Windows and native distro packages for Linux.
+- 🛡️ **DAVE/E2EE Ready:** Handles modern Discord encryption with clear fallback behavior.
 
 ## Quick Start
 
-1. 🤖 Create a bot in the Discord Developer Portal.
-2. ✅ Enable **MESSAGE CONTENT** intent.
-3. ⚙️ Set environment variables.
-4. ▶️ Build and run.
+1. 🤖 **Create a Bot:** Get your token from the [Discord Developer Portal](https://discord.com/developers/applications).
+2. ✅ **Enable Intents:** Turn on **MESSAGE CONTENT** in the portal.
+3. ⬇️ **Download:** Grab the latest `KurA-x64.msi` from [Releases](../../releases).
+4. ▶️ **Run:** Open `kura` from your Start Menu or Terminal, paste your token, and you're done!
 
-### Required Environment Variables
+---
 
-| Variable | Description | Default |
-|---|---|---|
-| `DISCORD_TOKEN` | Bot token (required) | none |
-| `OPUS_CACHE` | Folder containing `.opus` files | `./music_opus` |
-| `RUST_LOG` | Log level (`warn`, `info`, `debug`) | `warn` |
+## Installation & Running
 
-### Run (Windows)
+### Windows
+- **Standard (Recommended):** Download and run the `.msi` installer. It adds `kura` and `kurac` to your PATH.
+- **Run:** Simply type `kura` in any terminal or double-click the app. The bot will ask for your token on the first run.
 
-```powershell
-$env:DISCORD_TOKEN="YOUR_TOKEN_HERE"
-$env:OPUS_CACHE="./music_opus"
-powershell -ExecutionPolicy Bypass -File scripts/run_windows.ps1 -EnableDave
-```
+### Linux / macOS
+- **Binary:** Download the archive for your OS, extract, and run `./kura`.
+- **Global (via npx):**
+  ```bash
+  npx @toto-sys28/kura
+  ```
 
-### Run (Linux / macOS)
+---
 
-```bash
-export DISCORD_TOKEN="YOUR_TOKEN_HERE"
-export OPUS_CACHE="./music_opus"
-bash ./run.sh
-```
+## Music Conversion (`.opus`)
 
-## Build From Source
+KurA plays `.opus` files for maximum efficiency. You can convert your existing library using our built-in tool:
 
-### Standard build
+1. **Install FFmpeg:**
+   - **Windows:** `winget install Gyan.FFmpeg`
+   - **Linux:** `sudo apt/dnf/pacman -S ffmpeg`
+2. **Convert:**
+   ```bash
+   kurac
+   ```
+   Follow the interactive prompts to pick your music folder and output directory.
 
-```bash
-cargo build --release --bin kura
-```
-
-### DAVE/E2EE-capable build
-
-```bash
-cargo build --release --features dave --bin kura
-```
+---
 
 ## Commands
 
@@ -77,49 +71,24 @@ cargo build --release --features dave --bin kura
 - 📚 `!list [prefix]`, `!reindex`
 - 🛡️ `!privacy`, ❓`!help`, 🏓 `!ping`
 
-## Music Conversion (`.opus`)
+---
 
-Install FFmpeg:
-- Ubuntu/Debian: `sudo apt-get install ffmpeg`
-- Fedora/RHEL: `sudo dnf install ffmpeg`
-- Arch: `sudo pacman -S ffmpeg`
-- macOS: `brew install ffmpeg`
-- Windows: `winget install Gyan.FFmpeg`
+## Technical Setup (Developers)
 
-Use helpers:
-
+### Build From Source
 ```bash
-cargo run --bin kurac
+# Standard build
+cargo build --release --bin kura
+
+# DAVE/E2EE-capable build
+cargo build --release --features dave --bin kura
 ```
 
-```bash
-bash scripts/convert_all_to_opus.sh ./music ./music_opus
-```
-
-```powershell
-powershell -File scripts\convert_all_to_opus.ps1 -SRC ./music -OUT ./music_opus
-```
-
-## E2EE / DAVE: How We Skip the Encryption Problem
-
-Discord can require DAVE (E2EE) in some voice channels. KurA handles this in two modes:
-
-- ✅ Built **with** `--features dave`: KurA attempts DAVE-capable voice setup and exposes `!privacy` verification code support.
-- ⚠️ Built **without** `dave`: if channel encryption is required, KurA fails safely and tells you to use a non-E2EE channel or disable E2EE on that channel.
-
-This keeps behavior explicit instead of silently breaking playback.
-
-## Executables and Packaging
-
-- 🪟 **Windows executable**: `target/release/kura.exe`
-- 🐧🍎 **Linux/macOS binary**: `target/release/kura`
-- 🏷️ **GitHub Releases**: prebuilt archives for Windows/Linux/macOS.
-- 📦 **Linux distro packages**:
-  - Debian/Ubuntu: `.deb`
-  - Fedora/RHEL: `.rpm`
-  - Arch: `PKGBUILD` (source) and `PKGBUILD-bin` template for AUR binary package
-
-See `packaging/README.md` for package layout and service files.
+### Distro Packaging
+KurA includes build scripts for native packages in the `packaging/` folder:
+- **Debian/Ubuntu:** `bash packaging/deb/build_deb.sh`
+- **Fedora/RHEL:** uses `packaging/rpm/kura.spec`
+- **Arch Linux:** `PKGBUILD` available in `packaging/arch/` and `kura-voice-bin-latest/`
 
 <p align="center">
   <img alt="Footer" src="https://capsule-render.vercel.app/api?type=waving&color=0:22c55e,100:5865F2&height=120&section=footer">
