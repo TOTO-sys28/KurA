@@ -36,4 +36,4 @@ cp "$ROOT_DIR/target/release/kura" "$PKGDIR/usr/bin/kura"
 cp "$ROOT_DIR/target/release/kurac" "$PKGDIR/usr/bin/kurac"
 chmod 755 "$PKGDIR/usr/bin/kura" "$PKGDIR/usr/bin/kurac"
 
-dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura_0.1.0_amd64.deb"
+dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura-voice_0.1.5_amd64.deb"

@@ -44,7 +44,7 @@ function getPlatformInfo() {
     return { name: "win32-x64", archive: "kura-windows-x64.zip" };
   }
   if (platform === "linux" && arch === "x64") {
-    return { name: "linux-x64", archive: "kura-linux-x64.tar.gz" };
+    return { name: "linux-x64", archive: "kura_voice-linux-x64.tar.gz" };
   }
   if (platform === "darwin") {
     if (arch === "arm64") {

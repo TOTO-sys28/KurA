@@ -7,4 +7,4 @@ RUST_LOG=${RUST_LOG:-warn}
 
 export OPUS_CACHE RUST_LOG
 
-./target/release/kura_voice
+./target/release/kura

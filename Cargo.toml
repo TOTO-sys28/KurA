@@ -1,7 +1,15 @@
 [package]
 name = "kura_voice"
-version = "0.1.0"
+version = "0.1.5"
 edition = "2021"
+
+[[bin]]
+name = "kura"
+path = "src/main.rs"
+
+[[bin]]
+name = "kurac"
+path = "src/bin/kurac.rs"
 
 [dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "process", "signal"] }

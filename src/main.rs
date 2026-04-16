@@ -568,9 +568,9 @@ async fn main() -> Result<()> {
         Ok(v) if !v.trim().is_empty() => v,
         _ => {
             if cfg!(windows) {
-                eprintln!("DISCORD_TOKEN is required. Run setup.bat (creates kura.env) then: call kura.env && kura_voice.exe");
+                eprintln!("DISCORD_TOKEN is required. Run setup.bat (creates kura.env) then: call kura.env && kura.exe");
             } else {
-                eprintln!("DISCORD_TOKEN is required. Run: bash scripts/setup.sh (writes /etc/kura_voice.env or ./.env)");
+                eprintln!("DISCORD_TOKEN is required. Run: bash scripts/setup.sh (writes /etc/kura.env or ./.env)");
             }
             return Err(anyhow!("DISCORD_TOKEN is required"));
         }

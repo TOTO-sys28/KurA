@@ -26,7 +26,7 @@ echo.
 
 echo To run in this terminal:
 echo   call kura.env
-echo   target\release\kura_voice.exe
+echo   target\release\kura.exe
 
 echo.
 echo To set permanently (optional):

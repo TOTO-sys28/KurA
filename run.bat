@@ -9,4 +9,4 @@ IF "%DISCORD_TOKEN%"=="" (
 IF "%OPUS_CACHE%"=="" set OPUS_CACHE=./music_opus
 IF "%RUST_LOG%"=="" set RUST_LOG=warn
 
-target\release\kura_voice.exe
+target\release\kura.exe

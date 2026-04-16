@@ -1,5 +1,5 @@
 Name:           kura
-Version:        0.1.0
+Version:        0.1.5
 Release:        1%{?dist}
 Summary:        KurA low-CPU Discord voice music bot
 License:        MIT
@@ -52,5 +52,5 @@ echo "KurA installed. Edit /etc/kura.env then run: sudo systemctl enable --now k
 %systemd_postun_with_restart kura.service
 
 %changelog
-* Thu Apr 16 2026 TOTO-sys28 - 0.1.0-1
+* Thu Apr 16 2026 TOTO-sys28 - 0.1.5-1
 - Initial package with kura/kurac binaries

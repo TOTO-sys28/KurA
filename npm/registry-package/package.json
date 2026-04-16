@@ -1,6 +1,6 @@
 {
   "name": "kura2-cli",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "description": "KurA CLI installer (kura, kurac)",
   "license": "MIT",
   "repository": {
