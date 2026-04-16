@@ -116,6 +116,78 @@ fn opus_cache_root() -> PathBuf {
         .unwrap_or_else(|_| PathBuf::from("./music_opus"))
 }
 
+fn resolve_discord_token() -> Result<String> {
+    if let Ok(v) = env::var("DISCORD_TOKEN") {
+        let v = v.trim().to_string();
+        if !v.is_empty() {
+            return Ok(v);
+        }
+    }
+
+    use std::io::{self, IsTerminal};
+
+    if io::stdin().is_terminal() && io::stdout().is_terminal() {
+        return interactive_discord_setup();
+    }
+
+    if cfg!(windows) {
+        eprintln!("DISCORD_TOKEN is required. Run setup.bat (creates kura.env) then: call kura.env && kura.exe");
+    } else {
+        eprintln!("DISCORD_TOKEN is required.");
+        eprintln!("  TTY: run `kura` in an interactive terminal for setup, or:");
+        eprintln!("  AUR/systemd: edit /etc/kura.env then: sudo systemctl enable --now kura");
+        eprintln!("  Or: bash scripts/setup.sh (writes /etc/kura.env or ./.env)");
+    }
+    Err(anyhow!("DISCORD_TOKEN is required"))
+}
+
+fn interactive_discord_setup() -> Result<String> {
+    use dialoguer::{theme::ColorfulTheme, Confirm, Input, Password};
+
+    let theme = ColorfulTheme::default();
+
+    eprintln!();
+    eprintln!("KurA — no DISCORD_TOKEN in the environment.");
+    eprintln!("Interactive setup (not a full-screen TUI; use an interactive terminal).");
+    eprintln!("For systemd installs, prefer editing /etc/kura.env.\n");
+
+    let token = Password::with_theme(&theme)
+        .with_prompt("Discord bot token")
+        .interact()
+        .context("Failed to read token")?;
+
+    let token = token.trim().to_string();
+    if token.is_empty() {
+        return Err(anyhow!("Token is empty"));
+    }
+
+    let opus_default = env::var("OPUS_CACHE").unwrap_or_else(|_| "./music_opus".to_string());
+    let opus: String = Input::with_theme(&theme)
+        .with_prompt("OPUS cache directory")
+        .default(opus_default)
+        .interact()
+        .context("OPUS directory")?;
+
+    let opus = opus.trim().to_string();
+    if !opus.is_empty() {
+        env::set_var("OPUS_CACHE", &opus);
+    }
+
+    if Confirm::with_theme(&theme)
+        .with_prompt("Save DISCORD_TOKEN and OPUS_CACHE to ./.env in this directory?")
+        .default(true)
+        .interact()
+        .unwrap_or(false)
+    {
+        let opus_val = env::var("OPUS_CACHE").unwrap_or_else(|_| "./music_opus".to_string());
+        let env_body = format!("DISCORD_TOKEN={token}\nOPUS_CACHE={opus_val}\nRUST_LOG=warn\n");
+        std::fs::write(".env", env_body).context("Could not write ./.env")?;
+        eprintln!("Wrote ./.env — next time (bash): set -a && source ./.env && set +a && kura\n");
+    }
+
+    Ok(token)
+}
+
 fn normalize_name(s: &str) -> String {
     s.trim().to_lowercase()
 }
@@ -564,19 +636,7 @@ async fn main() -> Result<()> {
         )
         .init();
 
-    let token = match env::var("DISCORD_TOKEN") {
-        Ok(v) if !v.trim().is_empty() => v,
-        _ => {
-            if cfg!(windows) {
-                eprintln!("DISCORD_TOKEN is required. Run setup.bat (creates kura.env) then: call kura.env && kura.exe");
-            } else {
-                eprintln!("DISCORD_TOKEN is required.");
-                eprintln!("  AUR/systemd: edit /etc/kura.env then: sudo systemctl enable --now kura");
-                eprintln!("  Or: bash scripts/setup.sh (writes /etc/kura.env or ./.env)");
-            }
-            return Err(anyhow!("DISCORD_TOKEN is required"));
-        }
-    };
+    let token = resolve_discord_token()?;
 
     let intents = GatewayIntents::GUILDS
         | GatewayIntents::GUILD_MESSAGES

@@ -50,4 +50,4 @@ export PATH
 EOF
 chmod 644 "$PKGDIR/etc/bash/bashrc.d/kura-voice-bin.sh"
 
-dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura-voice_0.1.6_amd64.deb"
+dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura-voice_0.1.7_amd64.deb"

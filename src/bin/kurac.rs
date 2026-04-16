@@ -82,7 +82,7 @@ fn main() -> io::Result<()> {
     println!("Converts audio files to .opus for low-CPU playback.");
     println!();
 
-    let input_dir = read_input("Input music directory [./music]: ", Some("./music"))?;
+    let input_dir = read_input("Input music directory [. = here] [.] ", Some("."))?;
     let output_dir = read_input("Output OPUS directory [./music_opus]: ", Some("./music_opus"))?;
 
     let input_root = PathBuf::from(input_dir);
@@ -91,9 +91,14 @@ fn main() -> io::Result<()> {
     if !input_root.exists() || !input_root.is_dir() {
         return Err(io::Error::new(
             io::ErrorKind::NotFound,
-            format!("Input directory not found: {}", input_root.display()),
+            format!(
+                "Input directory not found: {} (create it or choose another path)",
+                input_root.display()
+            ),
         ));
     }
+
+    fs::create_dir_all(&output_root)?;
 
     let mut files = Vec::new();
     collect_audio_files(&input_root, &mut files)?;

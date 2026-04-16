@@ -1,6 +1,6 @@
 [package]
 name = "kura_voice"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021"
 
 [[bin]]
@@ -21,3 +21,4 @@ walkdir = "2"
 anyhow = "1"
 symphonia = { version = "0.5", default-features = false, features = ["ogg"] }
 rand = "0.8"
+dialoguer = "0.11"
