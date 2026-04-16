@@ -1,5 +1,5 @@
 {
-  "name": "@toto-sys28/kura",
+  "name": "kura2-cli",
   "version": "0.1.0",
   "description": "KurA CLI installer (kura, kurac)",
   "license": "MIT",
