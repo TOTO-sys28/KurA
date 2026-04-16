@@ -8,6 +8,8 @@ license=('MIT')
 depends=('glibc' 'openssl' 'opus' 'systemd')
 provides=('kura-voice')
 conflicts=('kura-voice')
+backup=('etc/kura.env')
+optdepends=('ffmpeg: kurac audio conversion to .opus')
 source_x86_64=(
   "https://github.com/TOTO-sys28/KurA/releases/download/v${pkgver}/kura_voice-linux-x64.tar.gz"
   "kura.service"
