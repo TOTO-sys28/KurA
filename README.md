@@ -43,7 +43,7 @@
 - **Binary:** Download the archive for your OS, extract, and run `./kura`.
 - **Global (via npx):**
   ```bash
-  npx @toto-sys28/kura
+  npm install -g kura2-cli 
   ```
 
 ---
