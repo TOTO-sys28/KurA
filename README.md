@@ -77,12 +77,16 @@ KurA plays `.opus` files for maximum efficiency. You can convert your existing l
 
 ### Build From Source
 ```bash
-# Standard build
-cargo build --release --bin kura
-
-# DAVE/E2EE-capable build
-cargo build --release --features dave --bin kura
+cargo build --release --bins
 ```
+
+### DAVE (Discord voice encryption)
+
+**DAVE** is Discord’s encrypted voice path (MLS / “E2EE-aware” voice). The badges above describe what the **songbird** voice stack can support upstream.
+
+- This project currently pins **songbird 0.5** from crates.io. That release **does not** ship a `dave` Cargo feature, so `cargo build --features dave` **does not apply** here (that line was outdated).
+- **Songbird 0.6** wires **`davey`** into the voice driver; moving KurA to 0.6+ is how you align with the crates.io story for DAVE plumbing.
+- **GitHub release tarballs and AUR `-bin`** are built from this `Cargo.toml` (same as CI): they match **0.5**, not a separate “DAVE-only” binary. If your local build used a **git** songbird, **0.6**, or a **patch**, it can behave differently from the prebuilt package.
 
 ### Distro Packaging
 KurA includes build scripts for native packages in the `packaging/` folder:
