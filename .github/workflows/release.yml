@@ -97,7 +97,7 @@ jobs:
       - name: Upload .deb
         uses: softprops/action-gh-release@v2
         with:
-          files: kura-voice_0.1.5_amd64.deb
+          files: kura-voice_0.1.6_amd64.deb
 
   rpm-package:
     runs-on: ubuntu-latest

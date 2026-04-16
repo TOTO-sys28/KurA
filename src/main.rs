@@ -570,7 +570,9 @@ async fn main() -> Result<()> {
             if cfg!(windows) {
                 eprintln!("DISCORD_TOKEN is required. Run setup.bat (creates kura.env) then: call kura.env && kura.exe");
             } else {
-                eprintln!("DISCORD_TOKEN is required. Run: bash scripts/setup.sh (writes /etc/kura.env or ./.env)");
+                eprintln!("DISCORD_TOKEN is required.");
+                eprintln!("  AUR/systemd: edit /etc/kura.env then: sudo systemctl enable --now kura");
+                eprintln!("  Or: bash scripts/setup.sh (writes /etc/kura.env or ./.env)");
             }
             return Err(anyhow!("DISCORD_TOKEN is required"));
         }

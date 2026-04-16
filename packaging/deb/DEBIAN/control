@@ -1,5 +1,5 @@
 Package: kura-voice
-Version: 0.1.5
+Version: 0.1.6
 Section: sound
 Priority: optional
 Architecture: amd64
