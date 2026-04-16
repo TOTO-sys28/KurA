@@ -8,7 +8,7 @@ ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 PKGDIR="$ROOT_DIR/packaging/deb_pkg"
 
 rm -rf "$PKGDIR"
-mkdir -p "$PKGDIR/DEBIAN" "$PKGDIR/usr/bin" "$PKGDIR/usr/lib/systemd/system" "$PKGDIR/etc/profile.d"
+mkdir -p "$PKGDIR/DEBIAN" "$PKGDIR/usr/bin" "$PKGDIR/usr/lib/systemd/system" "$PKGDIR/etc/profile.d" "$PKGDIR/etc/bash/bashrc.d"
 
 cp "$ROOT_DIR/packaging/deb/DEBIAN/control" "$PKGDIR/DEBIAN/control"
 cp "$ROOT_DIR/packaging/deb/DEBIAN/postinst" "$PKGDIR/DEBIAN/postinst"
@@ -42,5 +42,12 @@ PATH="/usr/bin:/usr/local/bin:$PATH"
 export PATH
 EOF
 chmod 644 "$PKGDIR/etc/profile.d/kura-voice-bin.sh"
+
+cat > "$PKGDIR/etc/bash/bashrc.d/kura-voice-bin.sh" <<'EOF'
+#!/bin/sh
+PATH="/usr/bin:/usr/local/bin:$PATH"
+export PATH
+EOF
+chmod 644 "$PKGDIR/etc/bash/bashrc.d/kura-voice-bin.sh"
 
 dpkg-deb --root-owner-group --build "$PKGDIR" "$ROOT_DIR/kura-voice_0.1.6_amd64.deb"
